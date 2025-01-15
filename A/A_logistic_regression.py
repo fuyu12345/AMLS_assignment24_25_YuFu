@@ -20,6 +20,28 @@ test_images = data['test_images']
 test_labels = data['test_labels'].ravel()
 
 
+
+# dataset information display
+def dataset_summary(images, labels, dataset_name):
+    print(f"=== {dataset_name} Dataset ===")
+    print(f"Number of samples: {images.shape[0]}")
+    print(f"Image shape: {images.shape[1:]} (Height x Width)")
+    print(f"Data type of images: {train_images.dtype}")
+    print(f"Data type of labels: {train_labels.dtype}")
+    print(f"Labels: {np.unique(labels)}")
+    print(f"Class distribution:")
+    for label in np.unique(labels):
+        count = np.sum(labels == label)
+        print(f"  Label {label}: {count} samples ({(count / len(labels)) * 100:.2f}%)")
+    print("\n")
+
+
+
+
+# adjust arguments to see different dataset summaries
+dataset_summary(train_images, train_labels, "Training")
+
+
 # 2. Flatten images (28x28 → 784) and scale (StandardScaler)
 
 X_train = train_images.reshape(train_images.shape[0], -1)
