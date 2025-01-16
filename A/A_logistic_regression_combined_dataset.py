@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-
+from sklearn.model_selection import GridSearchCV
 
 # 1. Load the dataset
 
@@ -20,9 +20,9 @@ test_labels = data['test_labels'].ravel()
 
 
 best_params = {
-    'C': 10,
+    'C': 0.01,
     'penalty': 'l2',
-    'solver': 'lbfgs'
+    'solver': 'sag'
 }
 
 
@@ -68,3 +68,42 @@ print(classification_report(test_labels, test_preds, target_names=["Benign", "Ma
 
 print("Confusion Matrix (Test Data):")
 print(confusion_matrix(test_labels, test_preds))
+
+
+
+param_grid = [
+    # Dictionary 1: solvers that support l1 or l2
+    {
+        'solver': ['liblinear', 'saga'],  
+        'penalty': ['l1', 'l2'],
+        'C': [0.01, 0.1, 1, 10, 100],
+    },
+    # Dictionary 2: solvers that only support l2
+    {
+        'solver': ['lbfgs', 'sag'],       
+        'penalty': ['l2'],               # only 'l2' is valid here
+        'C': [0.01, 0.1, 1, 10, 100],
+    }
+]
+
+
+lr_for_gridsearch = LogisticRegression(
+    class_weight='balanced',
+    max_iter=5000,
+    random_state=42
+)
+
+grid_search = GridSearchCV(
+    lr_for_gridsearch,
+    param_grid=param_grid,
+    scoring='accuracy',
+    cv=5,
+    n_jobs=-1,
+    verbose=1
+)
+
+grid_search.fit(X_train_val, y_train_val_labels)
+
+# Best hyperparameters found
+print("\n=== Hyperparameter Tuning Results ===")
+print(f"Best Hyperparameters: {grid_search.best_params_}")

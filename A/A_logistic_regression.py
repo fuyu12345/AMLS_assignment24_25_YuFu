@@ -22,24 +22,24 @@ test_labels = data['test_labels'].ravel()
 
 
 # dataset information display
-def dataset_summary(images, labels, dataset_name):
-    print(f"=== {dataset_name} Dataset ===")
-    print(f"Number of samples: {images.shape[0]}")
-    print(f"Image shape: {images.shape[1:]} (Height x Width)")
-    print(f"Data type of images: {train_images.dtype}")
-    print(f"Data type of labels: {train_labels.dtype}")
-    print(f"Labels: {np.unique(labels)}")
-    print(f"Class distribution:")
-    for label in np.unique(labels):
-        count = np.sum(labels == label)
-        print(f"  Label {label}: {count} samples ({(count / len(labels)) * 100:.2f}%)")
-    print("\n")
+# def dataset_summary(images, labels, dataset_name):
+#     print(f"=== {dataset_name} Dataset ===")
+#     print(f"Number of samples: {images.shape[0]}")
+#     print(f"Image shape: {images.shape[1:]} (Height x Width)")
+#     print(f"Data type of images: {train_images.dtype}")
+#     print(f"Data type of labels: {train_labels.dtype}")
+#     print(f"Labels: {np.unique(labels)}")
+#     print(f"Class distribution:")
+#     for label in np.unique(labels):
+#         count = np.sum(labels == label)
+#         print(f"  Label {label}: {count} samples ({(count / len(labels)) * 100:.2f}%)")
+#     print("\n")
 
 
 
 
 # adjust arguments to see different dataset summaries
-dataset_summary(train_images, train_labels, "Training")
+# dataset_summary(train_images, train_labels, "Training")
 
 
 # 2. Flatten images (28x28 → 784) and scale (StandardScaler)
@@ -54,25 +54,25 @@ X_val   = scaler.transform(X_val)
 X_test  = scaler.transform(X_test)
 
 
-# 3. Train a "vanilla" Logistic Regression (before optimization)
+# 3. Train a "ucl" Logistic Regression (before optimization)
 
-vanilla_lr = LogisticRegression(
+ucl_lr = LogisticRegression(
     class_weight='balanced',
     max_iter=1000,
     random_state=42
 )
-vanilla_lr.fit(X_train, train_labels)
+ucl_lr.fit(X_train, train_labels)
 
 # Evaluate on test set (before hyperparameter tuning)
-vanilla_test_preds = vanilla_lr.predict(X_val)
-vanilla_test_accuracy = accuracy_score(val_labels, vanilla_test_preds)
+ucl_test_preds = ucl_lr.predict(X_val)
+ucl_test_accuracy = accuracy_score(val_labels, ucl_test_preds)
 
 print("=== Before Hyperparameter Tuning ===")
-print(f"Validation Accuracy: {vanilla_test_accuracy * 100:.2f}%")
+print(f"Validation Accuracy: {ucl_test_accuracy * 100:.2f}%")
 print("\nClassification Report (Val Data):")
-print(classification_report(val_labels, vanilla_test_preds, target_names=["Benign", "Malignant"]))
+print(classification_report(val_labels, ucl_test_preds, target_names=["Benign", "Malignant"]))
 print("Confusion Matrix (Val Data):")
-print(confusion_matrix(val_labels, vanilla_test_preds))
+print(confusion_matrix(val_labels, ucl_test_preds))
 
 
 

@@ -20,7 +20,7 @@ X_train = normalize(X_train)
 X_test = normalize(X_test)
 
 # Train an SVM with RBF kernel
-svm_classifier = SVC(kernel='rbf', C=1, gamma='scale')  # Experiment with kernel='linear' or 'poly' if needed
+svm_classifier = SVC(kernel='rbf', C=1, gamma='scale')  
 svm_classifier.fit(X_train, train_labels)
 
 # Make predictions 
@@ -39,12 +39,12 @@ print("\nConfusion Matrix:")
 print(confusion_matrix(test_labels, y_pred))
 from sklearn.model_selection import GridSearchCV
 
-# param_grid = {
-#     'C': [0.1, 1, 10, 100],
-#     'gamma': [1, 0.1, 0.01, 0.001],
-#     'kernel': ['rbf']
-# }
-# grid = GridSearchCV(SVC(), param_grid, refit=True, verbose=2)
-# grid.fit(X_train, train_labels)
+param_grid = {
+    'C': [0.1, 1, 10, 100],
+    'gamma': [1, 0.1, 0.01, 0.001],
+    'kernel': ['rbf']
+}
+grid = GridSearchCV(SVC(), param_grid, refit=True, verbose=2)
+grid.fit(X_train, train_labels)
 
-# print("Best Parameters:", grid.best_params_)
+print("Best Parameters:", grid.best_params_)
