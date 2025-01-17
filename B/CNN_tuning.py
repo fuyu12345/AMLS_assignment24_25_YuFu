@@ -130,7 +130,7 @@ final_optimizer = optim.Adam(final_model.parameters(), lr=best_params['lr'])
 
 train_loader, val_loader, test_loader = create_loaders(best_params['batch_size'])
 
-num_epochs = 10
+num_epochs = 20
 train_losses = []
 val_losses = []
 val_accuracies = []

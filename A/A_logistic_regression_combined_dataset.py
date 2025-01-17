@@ -20,7 +20,7 @@ test_labels = data['test_labels'].ravel()
 
 
 best_params = {
-    'C': 0.01,
+    'C': 1,
     'penalty': 'l2',
     'solver': 'sag'
 }

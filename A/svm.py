@@ -35,51 +35,51 @@ X_test = scaler.transform(X_test)
 
 
 # 4. Hyperparameter tuning for SVM
-# param_grid_svc = {
-#     'C':      [0.01, 0.1, 1, 10, 100],
-#     'kernel': ['linear', 'rbf', 'poly', 'sigmoid'],
-#     'gamma':  ['scale', 'auto']  # gamma options for kernel='rbf', 'poly', or 'sigmoid'
-# }
+param_grid_svc = {
+    'C':      [0.01, 0.1, 1, 10, 100],
+    'kernel': ['linear', 'rbf', 'poly', 'sigmoid'],
+    'gamma':  ['scale', 'auto']  # gamma options for kernel='rbf', 'poly', or 'sigmoid'
+}
 
-# svc_for_gridsearch = SVC(
-#     class_weight='balanced',  # handle class imbalance
-#     max_iter=5000,            # increase iteration limit if needed
-#     random_state=42
-# )
+svc_for_gridsearch = SVC(
+    class_weight='balanced',  # handle class imbalance
+    max_iter=5000,            # increase iteration limit if needed
+    random_state=42
+)
 
-# grid_search_svc = GridSearchCV(
-#     estimator=svc_for_gridsearch,
-#     param_grid=param_grid_svc,
-#     scoring='accuracy',
-#     cv=5,    # 5-fold cross-validation
-#     n_jobs=-1,
-#     verbose=1
-# )
+grid_search_svc = GridSearchCV(
+    estimator=svc_for_gridsearch,
+    param_grid=param_grid_svc,
+    scoring='accuracy',
+    cv=5,    # 5-fold cross-validation
+    n_jobs=-1,
+    verbose=1
+)
 
-# grid_search_svc.fit(X_train_val, y_train_val_labels)
+grid_search_svc.fit(X_train_val, y_train_val_labels)
 
-# print("\n=== Hyperparameter Tuning Results (SVM) ===")
-# print(f"Best Hyperparameters: {grid_search_svc.best_params_}")
-# print(f"Best CV Accuracy: {grid_search_svc.best_score_:.4f}")
+print("\n=== Hyperparameter Tuning Results (SVM) ===")
+print(f"Best Hyperparameters: {grid_search_svc.best_params_}")
+print(f"Best CV Accuracy: {grid_search_svc.best_score_:.4f}")
 
-# # 5. Retrain the final model (SVC) on (train+val) with the best hyperparameters
-# best_params_svc = grid_search_svc.best_params_
-
-# final_svc_model = SVC(
-#     **best_params_svc,
-#     class_weight='balanced',
-#     max_iter=5000,
-#     random_state=42
-# )
+# 5. Retrain the final model (SVC) on (train+val) with the best hyperparameters
+best_params_svc = grid_search_svc.best_params_
 
 final_svc_model = SVC(
-    C=10,
-    kernel='linear',
-    gamma='scale',
+    **best_params_svc,
     class_weight='balanced',
     max_iter=5000,
-    
+    random_state=42
 )
+
+# final_svc_model = SVC(
+#     C=10,
+#     kernel='linear',
+#     gamma='scale',
+#     class_weight='balanced',
+#     max_iter=5000,
+    
+# )
 
 
 final_svc_model.fit(X_train_val, y_train_val_labels)

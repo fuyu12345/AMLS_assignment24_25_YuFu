@@ -102,7 +102,7 @@ final_svc_model.fit(X_train_val, y_train_val_labels)
 test_preds_svc = final_svc_model.predict(X_test)
 test_accuracy_svc = accuracy_score(test_labels, test_preds_svc)
 
-print("\n=== Final SVM Model (Trained on Train+Val) ===")
+print("\n=== Final SVM Model (Trained on Trainset) ===")
 print(f"Test Accuracy: {test_accuracy_svc * 100:.2f}%")
 
 print("\nClassification Report (Test Data):")

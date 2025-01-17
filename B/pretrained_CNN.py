@@ -17,10 +17,11 @@ test_labels  = data['test_labels'].ravel()
 #Preprocess the data (resize to 224x224 for ResNet)
 transform = transforms.Compose([
     transforms.ToTensor(),
-    transforms.Resize((224, 224)),  # ResNet expects 224x224 input
+    transforms.Resize((224, 224)),  
     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
 ])
 
+# Convert images to torch tensors
 train_images_torch = torch.stack([transform(img) for img in train_images])
 val_images_torch = torch.stack([transform(img) for img in val_images])
 test_images_torch = torch.stack([transform(img) for img in test_images])
@@ -29,6 +30,7 @@ train_labels_torch = torch.tensor(train_labels, dtype=torch.long)
 val_labels_torch = torch.tensor(val_labels, dtype=torch.long)
 test_labels_torch = torch.tensor(test_labels, dtype=torch.long)
 
+# Create TensorDatasets
 train_dataset = TensorDataset(train_images_torch, train_labels_torch)
 val_dataset = TensorDataset(val_images_torch, val_labels_torch)
 test_dataset = TensorDataset(test_images_torch, test_labels_torch)
@@ -37,7 +39,7 @@ train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
-#        Load a pre-trained ResNet18 model
+# Load a pre-trained ResNet18 model
 model = models.resnet18(pretrained=True)
 
 # Modify the fully connected layer for 8 classes
@@ -48,9 +50,9 @@ model.fc = nn.Linear(model.fc.in_features, num_classes)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
-#  Define optimizer and loss function,, lr=1e-4
+# Define optimizer and loss function, with lr=1e-4
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters())
+optimizer = optim.Adam(model.parameters(),lr=1e-4)
 
 # Training loop
 num_epochs = 10
