@@ -3,7 +3,7 @@ import os
 # 12
 if __name__ == "__main__":
     # Get the path to A.py
-    # A_logistic_regression_combined_dataset
+    # replace different paths to run different scripts
     a_script_path = os.path.join(os.path.dirname(__file__), "A", "A_logistic_regression_combined_dataset.py")
     
     # Run A.py using subprocess

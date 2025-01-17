@@ -1,1 +1,107 @@
-123
+# AMLS_24-25_SN12345678
+
+This project implements machine learning models for the **BreastMNIST** and **BloodMNIST** datasets, tackling two key tasks:
+
+1. **Task A: BreastMNIST Binary Classification**  
+   Classify images as "Benign" or "Malignant."
+
+2. **Task B: BloodMNIST Multi-Class Classification**  
+   Classify images into one of eight blood cell types.
+
+The project is structured into folders for each task, as well as supporting datasets and utilities.
+
+---
+
+## Project Organization
+
+### 1. **Folder A: Task A - BreastMNIST Binary Classification**
+This folder contains the implementations for Logistic Regression and Support Vector Machines (SVM) models:
+
+- **`A_logistic_regression.py`**  
+  Logistic Regression implementation using separate training and validation datasets.
+
+- **`A_logistic_regression_combined_dataset.py`**  
+  Logistic Regression implementation using combined training and validation datasets for model training.
+
+- **`svm.py`**  
+  SVM implementation using separate training and validation datasets.
+
+- **`svm_combined_dataset.py`**  
+  SVM implementation using combined training and validation datasets for model training.
+
+### 2. **Folder B: Task B - BloodMNIST Multi-Class Classification**
+This folder contains CNN-based implementations for the multi-class classification task:
+
+- **`CNN.py`**  
+  Basic CNN implementation for BloodMNIST classification.
+
+- **`CNN_tuning.py`**  
+  CNN implementation with hyperparameter tuning using Optuna for optimized performance.
+
+- **`pretrained_CNN.py`**  
+  Implementation of a pre-trained CNN (e.g., ResNet18) for BloodMNIST classification using transfer learning.
+
+- **`pretrained_CNN_tuning.py`**  
+  Implementation of a pre-trained CNN with Optuna-based hyperparameter tuning. This script finds the best hyperparameters but does not evaluate the model.
+
+### 3. **Datasets**
+- **`BreastMNIST`**  
+  Dataset for binary classification of breast tumor images.
+
+- **`BloodMNIST`**  
+  Dataset for multi-class classification of blood cell types.
+
+### 4. **Main Files**
+- **`main.py`**  
+  A central script that integrates the various models for both tasks. This can be used to run the entire project pipeline.
+
+- **`.gitignore`**  
+  Specifies files and directories to be ignored by version control.
+
+- **`requirements.txt`**  
+  Lists all required Python packages for the project. Use this file to install dependencies with `pip install -r requirements.txt`.
+
+---
+
+
+
+## Required Packages
+
+The following packages are used in this project. Make sure to install them before running the scripts. All required packages are also listed in `requirements.txt` for easy installation.
+
+### Python Libraries
+
+- **NumPy**: Numerical computations and array manipulations (`numpy`)
+- **scikit-learn**: Machine learning tools and metrics, including:
+  - `LogisticRegression`
+  - `SVC`
+  - `GridSearchCV`
+  - `StandardScaler`
+  - `classification_report`
+  - `confusion_matrix`
+  - `accuracy_score`
+  - `learning_curve`
+- **Matplotlib**: Visualization of learning curves and results (`matplotlib`)
+- **Torch**: Deep learning framework for building and training neural networks (`torch`)
+  - `torch.nn`: For defining neural network layers
+  - `torch.optim`: Optimization algorithms
+  - `torch.utils.data`: Data loading utilities
+  - `torchvision.transforms`: Image transformations
+- **Optuna**: Hyperparameter optimization library for tuning models (`optuna`)
+- **Torchvision**: Pre-trained models and additional utilities for deep learning tasks (`torchvision`)
+
+---
+
+### Installation
+
+To install all required packages, run:
+```bash
+pip install -r requirements.txt
+
+To run different scripts, you can replace the script path in your Python code. For example, to run the `A_logistic_regression_combined_dataset.py` script located in the `A` folder, you can use the following code snippet:
+
+```python
+import os
+
+# Replace the path to run different scripts
+a_script_path = os.path.join(os.path.dirname(__file__), "A", "A_logistic_regression_combined_dataset.py")
