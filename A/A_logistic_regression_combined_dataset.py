@@ -4,73 +4,25 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.model_selection import GridSearchCV
 
-# 1. Load the dataset
-
+# Load the dataset
 data = np.load("Datasets/BreastMNIST/breastmnist.npz")
+train_images, train_labels = data['train_images'], data['train_labels'].ravel()
+val_images, val_labels = data['val_images'], data['val_labels'].ravel()
+test_images, test_labels = data['test_images'], data['test_labels'].ravel()
 
-train_images = data['train_images']
-train_labels = data['train_labels'].ravel()
+#  Combine the training and validation sets
+X_train_val = np.concatenate([train_images, val_images], axis=0)
+y_train_val = np.concatenate([train_labels, val_labels], axis=0)
 
-val_images = data['val_images']
-val_labels = data['val_labels'].ravel()
-
-test_images = data['test_images']
-test_labels = data['test_labels'].ravel()
-
-
-
-best_params = {
-    'C': 1,
-    'penalty': 'l2',
-    'solver': 'sag'
-}
-
-
-
-# 2. Combine the training and validation sets
-
-X_train_val_images = np.concatenate([train_images, val_images], axis=0)
-y_train_val_labels = np.concatenate([train_labels, val_labels], axis=0)
-
-# Flatten (28×28 → 784)
-X_train_val = X_train_val_images.reshape(X_train_val_images.shape[0], -1)
-X_test      = test_images.reshape(test_images.shape[0], -1)
-
-
-# Scale the data
-# Fit the scaler on (train+val), then transform (train+val) and test
+#  Flatten images and scale the data
+X_train_val = X_train_val.reshape(X_train_val.shape[0], -1)
+X_test = test_images.reshape(test_images.shape[0], -1)
 
 scaler = StandardScaler()
 X_train_val = scaler.fit_transform(X_train_val)
-X_test      = scaler.transform(X_test)
+X_test = scaler.transform(X_test)
 
-# 4. Retrain Logistic Regression with the best hyperparameters
-
-final_model = LogisticRegression(
-    **best_params,           
-    class_weight='balanced',
-    max_iter=5000,          
-    random_state=42
-)
-final_model.fit(X_train_val, y_train_val_labels)
-
-
-# 5. Evaluate 
-
-test_preds = final_model.predict(X_test)
-test_accuracy = accuracy_score(test_labels, test_preds)
-
-print("=== Final Model (Trained on Train+Val) ===")
-print(f"Test Accuracy: {test_accuracy * 100:.2f}%")
-
-print("\nClassification Report (Test Data):")
-print(classification_report(test_labels, test_preds, target_names=["Benign", "Malignant"]))
-
-print("Confusion Matrix (Test Data):")
-print(confusion_matrix(test_labels, test_preds))
-
-
-
+#  Hyperparameter tuning with GridSearchCV
 param_grid = [
     # Dictionary 1: solvers that support l1 or l2
     {
@@ -86,15 +38,10 @@ param_grid = [
     }
 ]
 
-
-lr_for_gridsearch = LogisticRegression(
-    class_weight='balanced',
-    max_iter=5000,
-    random_state=42
-)
+lr_model = LogisticRegression(class_weight='balanced', max_iter=5000, random_state=42)
 
 grid_search = GridSearchCV(
-    lr_for_gridsearch,
+    estimator=lr_model,
     param_grid=param_grid,
     scoring='accuracy',
     cv=5,
@@ -102,8 +49,31 @@ grid_search = GridSearchCV(
     verbose=1
 )
 
-grid_search.fit(X_train_val, y_train_val_labels)
+grid_search.fit(X_train_val, y_train_val)
 
-# Best hyperparameters found
+# Best hyperparameters
+best_params = grid_search.best_params_
 print("\n=== Hyperparameter Tuning Results ===")
-print(f"Best Hyperparameters: {grid_search.best_params_}")
+print(f"Best Hyperparameters: {best_params}")
+
+#  Retrain Logistic Regression with best hyperparameters
+final_model = LogisticRegression(
+    **best_params,
+    class_weight='balanced',
+    max_iter=5000,
+    random_state=42
+)
+final_model.fit(X_train_val, y_train_val)
+
+# Evaluate on the test set
+test_preds = final_model.predict(X_test)
+test_accuracy = accuracy_score(test_labels, test_preds)
+
+print("\n=== Final Model (Trained on Train+Val) ===")
+print(f"Test Accuracy: {test_accuracy * 100:.2f}%")
+
+print("\nClassification Report (Test Data):")
+print(classification_report(test_labels, test_preds, target_names=["Benign", "Malignant"]))
+
+print("Confusion Matrix (Test Data):")
+print(confusion_matrix(test_labels, test_preds))

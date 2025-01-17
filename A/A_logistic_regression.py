@@ -5,8 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
 
-# 1. Load the dataset
-
+# Load the dataset
 data = np.load("Datasets/BreastMNIST/breastmnist.npz")
 
 
@@ -22,6 +21,7 @@ test_labels = data['test_labels'].ravel()
 
 
 # dataset information display
+
 # def dataset_summary(images, labels, dataset_name):
 #     print(f"=== {dataset_name} Dataset ===")
 #     print(f"Number of samples: {images.shape[0]}")
@@ -37,13 +37,11 @@ test_labels = data['test_labels'].ravel()
 
 
 
-
 # adjust arguments to see different dataset summaries
 # dataset_summary(train_images, train_labels, "Training")
 
 
-# 2. Flatten images (28x28 → 784) and scale (StandardScaler)
-
+#  Flatten images (28x28 → 784) and scale (StandardScaler)
 X_train = train_images.reshape(train_images.shape[0], -1)
 X_val   = val_images.reshape(val_images.shape[0], -1)
 X_test  = test_images.reshape(test_images.shape[0], -1)
@@ -54,8 +52,7 @@ X_val   = scaler.transform(X_val)
 X_test  = scaler.transform(X_test)
 
 
-# 3. Train a "ucl" Logistic Regression (before optimization)
-
+# Train a "ucl" Logistic Regression (before optimization)
 ucl_lr = LogisticRegression(
     class_weight='balanced',
     max_iter=1000,
@@ -63,7 +60,7 @@ ucl_lr = LogisticRegression(
 )
 ucl_lr.fit(X_train, train_labels)
 
-# Evaluate on test set (before hyperparameter tuning)
+# Evaluate on val set (before hyperparameter tuning)
 ucl_test_preds = ucl_lr.predict(X_val)
 ucl_test_accuracy = accuracy_score(val_labels, ucl_test_preds)
 
@@ -76,9 +73,8 @@ print(confusion_matrix(val_labels, ucl_test_preds))
 
 
 
-# 4. Hyperparameter tuning with GridSearchCV on the training data
+# Hyperparameter tuning with GridSearchCV on the training data
 #    We use 5-fold CV and 'accuracy' as the scoring metriX
-
 param_grid = [
     # Dictionary 1: solvers that support l1 or l2
     {
@@ -117,7 +113,7 @@ print("\n=== Hyperparameter Tuning Results ===")
 print(f"Best Hyperparameters: {grid_search.best_params_}")
 
 
-# 5. Evaluate the best model on the validation set
+# Evaluate the best model on the validation set
 
 best_lr = grid_search.best_estimator_
 val_preds = best_lr.predict(X_val)
@@ -130,8 +126,7 @@ print("Confusion Matrix (Validation Data):")
 print(confusion_matrix(val_labels, val_preds))
 
 
-# 6. Evaluate the best model on the test set (after tuning)
-
+# Evaluate the best model on the test set (after tuning)
 best_test_preds = best_lr.predict(X_test)
 best_test_accuracy = accuracy_score(test_labels, best_test_preds)
 

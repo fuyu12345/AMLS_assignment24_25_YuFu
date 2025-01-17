@@ -10,8 +10,7 @@ import matplotlib.pyplot as plt
 import optuna
 
 
-# 1. Load the data
-
+# Load the data
 data = np.load("Datasets/BloodMNIST/bloodmnist.npz")
 
 train_images = data['train_images']
@@ -22,7 +21,7 @@ test_images = data['test_images']
 test_labels = data['test_labels'].ravel()
 
 
-# 2. Create Torch Tensors
+# Create Torch Tensors
 train_images_torch = torch.tensor(train_images, dtype=torch.float32).permute(0, 3, 1, 2)
 val_images_torch = torch.tensor(val_images, dtype=torch.float32).permute(0, 3, 1, 2)
 test_images_torch = torch.tensor(test_images, dtype=torch.float32).permute(0, 3, 1, 2)
@@ -31,13 +30,14 @@ train_labels_torch = torch.tensor(train_labels, dtype=torch.long)
 val_labels_torch = torch.tensor(val_labels, dtype=torch.long)
 test_labels_torch = torch.tensor(test_labels, dtype=torch.long)
 
+# transforms
 normalize = transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
 train_images_torch = normalize(train_images_torch / 255.0)
 val_images_torch = normalize(val_images_torch / 255.0)
 test_images_torch = normalize(test_images_torch / 255.0)
 
 
-# 3. Create Dataset and Loader
+# Create Dataset and Loader
 def create_loaders(batch_size):
     train_dataset = TensorDataset(train_images_torch, train_labels_torch)
     val_dataset = TensorDataset(val_images_torch, val_labels_torch)
@@ -50,7 +50,7 @@ def create_loaders(batch_size):
     return train_loader, val_loader, test_loader
 
 
-# 4. Define a CNN Architecture
+# Define a CNN Architecture
 class TunedCNN(nn.Module):
     def __init__(self, conv1_filters, conv2_filters, num_classes=8):
         super(TunedCNN, self).__init__()
@@ -121,8 +121,7 @@ print("Best Hyperparameters:", study.best_params)
 print("Best Validation Accuracy:", study.best_value)
 
 
-# 7. Final Training and Evaluation with Best Hyperparameters
-
+# Final Training and Evaluation with Best Hyperparameters
 best_params = study.best_params
 final_model = TunedCNN(best_params['conv1_filters'], best_params['conv2_filters']).to(device)
 final_criterion = nn.CrossEntropyLoss()

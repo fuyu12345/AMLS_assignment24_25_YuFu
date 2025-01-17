@@ -24,6 +24,7 @@ print(train_labels.shape)
 
 
 # Dataset information display
+
 # def dataset_summary(images, labels, dataset_name):
 #     print(f"=== {dataset_name} Dataset ===")
 #     print(f"Number of samples: {images.shape[0]}")
@@ -37,18 +38,17 @@ print(train_labels.shape)
 #         print(f"  Label {label}: {count} samples ({(count / len(labels)) * 100:.2f}%)")
 #     print("\n")
 
-# # Display dataset summaries
+# Display dataset summaries
+
 # dataset_summary(train_images, train_labels, "Training")
 # dataset_summary(val_images, val_labels, "Validation")
 # dataset_summary(test_images, test_labels, "Testing")
 
-# 2. Create Torch Tensors
-
-# Convert images to float32, labels to long (for multi-class classification).
+# Create Torch Tensors
+# Convert images to float32, labels to long 
 train_images_torch = torch.tensor(train_images, dtype=torch.float32).permute(0, 3, 1, 2)
 val_images_torch   = torch.tensor(val_images,   dtype=torch.float32).permute(0, 3, 1, 2)
 test_images_torch  = torch.tensor(test_images,  dtype=torch.float32).permute(0, 3, 1, 2)
-
 
 
 train_labels_torch = torch.tensor(train_labels, dtype=torch.long)
@@ -57,19 +57,15 @@ test_labels_torch  = torch.tensor(test_labels,  dtype=torch.long)
 print(train_images_torch.shape)
 print(train_labels_torch.shape)
 
-# 3.  transforms 
-
+# transforms 
 normalize = transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
-
 train_images_torch = normalize(train_images_torch / 255.0)
 val_images_torch   = normalize(val_images_torch / 255.0)
 test_images_torch  = normalize(test_images_torch / 255.0)
 
 
-# 4. Create Dataset and Loader
-
+#Create Dataset and Loader
 batch_size = 64
-
 train_dataset = TensorDataset(train_images_torch, train_labels_torch)
 val_dataset   = TensorDataset(val_images_torch,   val_labels_torch)
 test_dataset  = TensorDataset(test_images_torch,  test_labels_torch)
@@ -79,8 +75,7 @@ val_loader   = DataLoader(val_dataset,   batch_size=batch_size, shuffle=False)
 test_loader  = DataLoader(test_dataset,  batch_size=batch_size, shuffle=False)
 
 
-# 5. Define a simple CNN architecture
-
+#Define a simple CNN architecture
 class SimpleCNN(nn.Module):
     def __init__(self, num_classes=8):
         super(SimpleCNN, self).__init__()
@@ -115,14 +110,12 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 
-# 6. Define optimizer
-
+# Define optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
 
-# 7. Train + Eval
-
+# Train + Eval
 num_epochs = 20
 
 # Initialize lists to store metrics
@@ -177,7 +170,7 @@ for epoch in range(num_epochs):
           f"Train Acc: {epoch_train_accuracy:.4f}, "
           f"Val Acc: {epoch_val_accuracy:.4f}")
 
-# 8. Final Evaluation
+
 
 # Evaluate on the test set
 model.eval()
@@ -207,8 +200,6 @@ print(confusion_matrix(all_labels, all_preds))
 
 # --------------------
 # Plot the Learning Curves
-# --------------------
-# Plot Training and Validation Accuracy
 plt.figure(figsize=(10, 5))
 plt.plot(range(1, num_epochs + 1), train_accuracies, label='Training Accuracy')
 plt.plot(range(1, num_epochs + 1), val_accuracies, label='Validation Accuracy', color='orange')
